@@ -1,0 +1,37 @@
+[
+  {
+    "number": "1234567890123456",
+    "validTill": "12/25",
+    "cvv": "123",
+    "balance": 100000.00,
+    "currency": "RUB"
+  },
+  {
+    "number": "1111222233334444",
+    "validTill": "10/24",
+    "cvv": "456",
+    "balance": 5000.00,
+    "currency": "RUB"
+  },
+  {
+    "number": "5555666677778888",
+    "validTill": "05/26",
+    "cvv": "789",
+    "balance": 2000.00,
+    "currency": "USD"
+  },
+  {
+    "number": "9999888877776666",
+    "validTill": "03/25",
+    "cvv": "321",
+    "balance": 1500.00,
+    "currency": "EUR"
+  },
+  {
+    "number": "0000111122223333",
+    "validTill": "07/27",
+    "cvv": "654",
+    "balance": 75000.50,
+    "currency": "RUB"
+  }
+]
