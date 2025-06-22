@@ -1,106 +1,41 @@
 package ru.netology.money_transfer_service.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 
 import java.util.Objects;
 
+@Data
 public class TransferRequest {
-    @JsonProperty("cardFromNumber")
+    @NotBlank(message = "Card number is required")
+    @Size(min = 16, max = 16, message = "Card number must be 16 digits")
     private String cardFromNumber;
 
-    @JsonProperty("cardFromValidTill")
+    @NotBlank(message = "Card expiry date is required")
+    @Pattern(regexp = "(0[1-9]|1[0-2])/\\d{2}", message = "Expiry date must be in MM/YY format")
     private String cardFromValidTill;
 
-    @JsonProperty("cardFromCVV")
+    @NotBlank(message = "CVV is required")
+    @Pattern(regexp = "\\d{3}", message = "CVV must be 3 digits")
     private String cardFromCVV;
 
-    @JsonProperty("cardToNumber")
+    @NotBlank(message = "Recipient card number is required")
+    @Size(min = 16, max = 16, message = "Card number must be 16 digits")
     private String cardToNumber;
 
-    @JsonProperty("amount")
+    @Valid
+    @NotNull(message = "Amount is required")
     private Amount amount;
 
-    // Геттеры и сеттеры
-    public String getCardFromNumber() {
-        return cardFromNumber;
-    }
-
-    public void setCardFromNumber(String cardFromNumber) {
-        this.cardFromNumber = cardFromNumber;
-    }
-
-    public String getCardFromValidTill() {
-        return cardFromValidTill;
-    }
-
-    public void setCardFromValidTill(String cardFromValidTill) {
-        this.cardFromValidTill = cardFromValidTill;
-    }
-
-    public String getCardFromCVV() {
-        return cardFromCVV;
-    }
-
-    public void setCardFromCVV(String cardFromCVV) {
-        this.cardFromCVV = cardFromCVV;
-    }
-
-    public String getCardToNumber() {
-        return cardToNumber;
-    }
-
-    public void setCardToNumber(String cardToNumber) {
-        this.cardToNumber = cardToNumber;
-    }
-
-    public Amount getAmount() {
-        return amount;
-    }
-
-    public void setAmount(Amount amount) {
-        this.amount = amount;
-    }
-
-    // Вложенный класс Amount
+    @Data
     public static class Amount {
-        @JsonProperty("value")
+        @Min(value = 1, message = "Amount must be positive")
         private int value;
 
-        @JsonProperty("currency")
+        @NotBlank(message = "Currency is required")
+        @Pattern(regexp = "[A-Z]{3}", message = "Currency must be 3 uppercase letters")
         private String currency;
-
-        // Геттеры и сеттеры
-        public int getValue() {
-            return value;
-        }
-
-        public void setValue(int value) {
-            this.value = value;
-        }
-
-        public String getCurrency() {
-            return currency;
-        }
-
-        public void setCurrency(String currency) {
-            this.currency = currency;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            Amount amount = (Amount) o;
-            return value == amount.value && Objects.equals(currency, amount.currency);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(value, currency);
-        }
     }
 
     @Override

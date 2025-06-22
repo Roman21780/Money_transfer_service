@@ -1,3 +1,96 @@
+Структура папок
+Серийный номер тома: 382F-88E9
+C:.
+├───.gradle
+│   ├───8.14.2
+│   │   ├───checksums
+│   │   ├───executionHistory
+│   │   ├───expanded
+│   │   ├───fileChanges
+│   │   ├───fileHashes
+│   │   └───vcsMetadata
+│   ├───buildOutputCleanup
+│   └───vcs-1
+├───.idea
+│   ├───httpRequests
+│   └───modules
+├───build
+│   ├───classes
+│   │   └───java
+│   │       ├───main
+│   │       │   └───ru
+│   │       │       └───netology
+│   │       │           └───money_transfer_service
+│   │       │               ├───config
+│   │       │               ├───controller
+│   │       │               ├───dto
+│   │       │               ├───exception
+│   │       │               ├───model
+│   │       │               ├───repository
+│   │       │               └───service
+│   │       └───test
+│   │           └───ru
+│   │               └───netology
+│   │                   └───money_transfer_service
+│   ├───generated
+│   │   └───sources
+│   │       ├───annotationProcessor
+│   │       │   └───java
+│   │       │       ├───main
+│   │       │       └───test
+│   │       └───headers
+│   │           └───java
+│   │               ├───main
+│   │               └───test
+│   ├───libs
+│   ├───reports
+│   │   └───tests
+│   │       └───test
+│   │           ├───classes
+│   │           ├───css
+│   │           ├───js
+│   │           └───packages
+│   ├───resources
+│   │   └───main
+│   │       ├───static
+│   │       └───templates
+│   ├───test-results
+│   │   └───test
+│   │       └───binary
+│   └───tmp
+│       ├───bootJar
+│       ├───compileJava
+│       ├───compileTestJava
+│       ├───jar
+│       └───test
+├───front
+├───gradle
+│   └───wrapper
+├───logs
+└───src
+├───main
+│   ├───java
+│   │   └───ru
+│   │       └───netology
+│   │           └───money_transfer_service
+│   │               ├───config
+│   │               ├───controller
+│   │               ├───dto
+│   │               ├───exception
+│   │               ├───model
+│   │               ├───repository
+│   │               └───service
+│   └───resources
+│       ├───static
+│       └───templates
+└───test
+└───java
+└───ru
+└───netology
+└───money_transfer_service
+
+
+
 Запуск проекта
 1. Dockerfile
    dockerfile
@@ -174,3 +267,61 @@ class TransferControllerTest {
 Кластеризация через Kubernetes
 
 Проект соответствует всем требованиям: REST API, логирование, Docker-контейнеризация, интеграция с FRONT.
+
+
+# Анализ
+
+Как получить логи из контейнера:
+
+bash
+docker cp <container_id>:/app/logs/application.log ./local/path/
+
+
+1. Запуск проекта:
+   Соберите проект:
+
+bash
+./gradlew clean build
+Запустите через Docker:
+
+bash
+docker-compose down && docker-compose up --build
+
+2. Проверка работы:
+   Бэкенд будет доступен на http://localhost:5500
+
+Фронтенд на http://localhost:3000
+
+Логи будут сохраняться в папке logs/ в вашем проекте
+
+3. Альтернативный вариант (без Docker):
+
+В одном терминале (бэкенд):
+
+bash
+./gradlew bootRun
+
+В другом терминале (фронтенд):
+
+bash
+cd C:\Java\Project1\WEB\card-transfer
+npm start
+
+4. Проверка работы
+   Фронтенд будет доступен по: http://localhost:3000
+
+Бэкенд будет доступен по: http://localhost:5500
+
+Для проверки API:
+
+bash
+curl -X POST http://localhost:5500/transfer -H "Content-Type: application/json" -d 
+'{"cardFromNumber":"1234567890123456","cardToNumber":"1111222233334444",
+"amount":{"value":1000}}'
+
+5. Логирование
+Логи будут доступны:
+
+Бэкенд: в папке ./logs вашего проекта
+
+Фронтенд: в терминале или через docker logs money_transfer_service-frontend-1

@@ -6,11 +6,17 @@ services:
       - "5500:5500"
     volumes:
       - ./logs:/app/logs # Маппинг логов
+      - ./src/main/resources:/app/resources # Добавляем монтирование resources
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+
   frontend:
-    image: node:14
-    working_dir: /app
-    volumes:
-      - ./front:/app # Папка с FRONT (из репозитория FRONT)
+    build:
+      context: C:\Java\Project1\WEB\card-transfer
+      dockerfile: Dockerfile.frontend
     ports:
       - "3000:3000"
-    command: "npm start"
+    environment:
+      - REACT_APP_API_URL=http://backend:5500
+    depends_on:
+      - backend
