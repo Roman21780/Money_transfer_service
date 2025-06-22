@@ -1,6 +1,5 @@
 package ru.netology.money_transfer_service.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.netology.money_transfer_service.dto.ConfirmRequest;
 import ru.netology.money_transfer_service.dto.OperationResponse;

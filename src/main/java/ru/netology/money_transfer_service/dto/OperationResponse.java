@@ -8,6 +8,11 @@ public class OperationResponse {
     @JsonProperty("operationId")
     private String operationId;
 
+    // Конструктор
+    public OperationResponse(String operationId) {
+            this.operationId = operationId;
+    }
+
     // Геттеры и сеттеры
     public String getOperationId() {
         return operationId;
