@@ -3,14 +3,9 @@ package ru.netology.money_transfer_service.service;
 import org.springframework.stereotype.Service;
 import ru.netology.money_transfer_service.dto.ConfirmRequest;
 import ru.netology.money_transfer_service.dto.OperationResponse;
-import ru.netology.money_transfer_service.exception.CardNotFoundException;
-import ru.netology.money_transfer_service.exception.InvalidCodeException;
-import ru.netology.money_transfer_service.exception.OperationNotFoundException;
-import ru.netology.money_transfer_service.model.Card;
-import ru.netology.money_transfer_service.model.Operation;
-import ru.netology.money_transfer_service.model.OperationStatus;
-import ru.netology.money_transfer_service.repository.CardRepository;
-import ru.netology.money_transfer_service.repository.OperationRepository;
+import ru.netology.money_transfer_service.exception.*;
+import ru.netology.money_transfer_service.model.*;
+import ru.netology.money_transfer_service.repository.*;
 
 import java.math.BigDecimal;
 
@@ -29,27 +24,33 @@ public class ConfirmService {
     }
 
     public OperationResponse confirm(ConfirmRequest request) {
-        Operation operation = operationRepository.findById(request.getOperationId())
-                .orElseThrow(() -> new OperationNotFoundException());
+        Operation operation = operationRepository.findById(request.operationId())
+                .orElseThrow(OperationNotFoundException::new);
 
-        if (!"0000".equals(request.getCode())) {
-            throw new InvalidCodeException();
+        if (!"0000".equals(request.code())) {
+            throw new InvalidConfirmationCodeException();
         }
 
-        Card cardFrom = cardRepository.findCard(operation.getCardFrom())
-                .orElseThrow(() -> new CardNotFoundException());
-        Card cardTo = cardRepository.findCard(operation.getCardTo())
-                .orElseThrow(() -> new CardNotFoundException());
+        Card cardFrom = cardRepository.findCard(operation.cardFrom())
+                .orElseThrow(CardNotFoundException::new);
+        Card cardTo = cardRepository.findCard(operation.cardTo())
+                .orElseThrow(CardNotFoundException::new);
 
-        BigDecimal totalAmount = operation.getAmount().add(operation.getCommission());
+        BigDecimal totalAmount = operation.amount().add(operation.commission());
 
-        cardFrom.setBalance(cardFrom.getBalance().subtract(totalAmount));
-        cardTo.setBalance(cardTo.getBalance().add(operation.getAmount()));
+        // Создаем новые версии карт с обновленными балансами
+        Card updatedCardFrom = cardFrom.withBalance(cardFrom.balance().subtract(totalAmount));
+        Card updatedCardTo = cardTo.withBalance(cardTo.balance().add(operation.amount()));
 
-        operation.setStatus(OperationStatus.SUCCESS.toString());
-        operationRepository.save(operation); // Явное сохранение изменений
+        // Обновляем операцию
+        Operation updatedOperation = operation.withStatus(OperationStatus.SUCCESS.toString());
 
-        logService.logOperation(operation);
-        return new OperationResponse(operation.getId());
+        // Сохраняем изменения
+        cardRepository.save(updatedCardFrom);
+        cardRepository.save(updatedCardTo);
+        operationRepository.save(updatedOperation);
+
+        logService.logOperation(updatedOperation);
+        return new OperationResponse(updatedOperation.id());
     }
 }

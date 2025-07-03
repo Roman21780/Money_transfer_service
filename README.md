@@ -1,327 +1,181 @@
-Структура папок
-Серийный номер тома: 382F-88E9
-C:.
-├───.gradle
-│   ├───8.14.2
-│   │   ├───checksums
-│   │   ├───executionHistory
-│   │   ├───expanded
-│   │   ├───fileChanges
-│   │   ├───fileHashes
-│   │   └───vcsMetadata
-│   ├───buildOutputCleanup
-│   └───vcs-1
-├───.idea
-│   ├───httpRequests
-│   └───modules
-├───build
-│   ├───classes
-│   │   └───java
-│   │       ├───main
-│   │       │   └───ru
-│   │       │       └───netology
-│   │       │           └───money_transfer_service
-│   │       │               ├───config
-│   │       │               ├───controller
-│   │       │               ├───dto
-│   │       │               ├───exception
-│   │       │               ├───model
-│   │       │               ├───repository
-│   │       │               └───service
-│   │       └───test
-│   │           └───ru
-│   │               └───netology
-│   │                   └───money_transfer_service
-│   ├───generated
-│   │   └───sources
-│   │       ├───annotationProcessor
-│   │       │   └───java
-│   │       │       ├───main
-│   │       │       └───test
-│   │       └───headers
-│   │           └───java
-│   │               ├───main
-│   │               └───test
-│   ├───libs
-│   ├───reports
-│   │   └───tests
-│   │       └───test
-│   │           ├───classes
-│   │           ├───css
-│   │           ├───js
-│   │           └───packages
-│   ├───resources
-│   │   └───main
-│   │       ├───static
-│   │       └───templates
-│   ├───test-results
-│   │   └───test
-│   │       └───binary
-│   └───tmp
-│       ├───bootJar
-│       ├───compileJava
-│       ├───compileTestJava
-│       ├───jar
-│       └───test
-├───front
-├───gradle
-│   └───wrapper
-├───logs
-└───src
-├───main
-│   ├───java
-│   │   └───ru
-│   │       └───netology
-│   │           └───money_transfer_service
-│   │               ├───config
-│   │               ├───controller
-│   │               ├───dto
-│   │               ├───exception
-│   │               ├───model
-│   │               ├───repository
-│   │               └───service
-│   └───resources
-│       ├───static
-│       └───templates
-└───test
-└───java
-└───ru
-└───netology
-└───money_transfer_service
 
+# **Money Transfer Service**
 
+Приложение предоставляет простой интерфейс для перевода денег с карты на карту.
 
-Запуск проекта
-1. Dockerfile
-   dockerfile
-   FROM openjdk:17-alpine
-   WORKDIR /app
-   COPY build/libs/*.jar app.jar
-   EXPOSE 5500
-   ENTRYPOINT ["java", "-jar", "app.jar"]
-2. docker-compose.yml
-   yaml
-   version: '3.8'
-   services:
-   backend:
-   build: .
-   ports:
-    - "5500:5500"
-      volumes:
-    - ./logs:/app/logs # Маппинг логов
-      frontend:
-      image: node:14
-      working_dir: /app
-      volumes:
-    - ./front:/app # Папка с FRONT (из репозитория FRONT)
-      ports:
-    - "3000:3000"
-      command: "npm start"
-3. Команды для запуска
-   bash
-# Сборка проекта
+**Демо:** [https://serp-ya.github.io/card-transfer/](https://serp-ya.github.io/card-transfer/)
+
+---
+
+## **Описание проекта**
+
+Проект предоставляет UI для перевода денег с одной карты на другую. В видимой части приложения присутствуют две карты (откуда и куда переводить), поле ввода суммы перевода и кнопка "Отправить".
+
+### **Основные возможности**
+- Пользователь может ввести данные карты отправителя и получателя.
+- Поддерживается форматирование ввода данных.
+- Реализована валидация полей формы.
+- При успешной отправке или возникновении ошибки отображаются соответствующие модальные окна.
+
+---
+
+## **Системные требования**
+
+- Node.js (версия 14 или выше)
+- npm (версия 6 или выше)
+
+---
+
+## **Установка и запуск**
+## **Backend**
+
+1. **Сборка проекта**
 ./gradlew build
 
-# Создание Docker-образа
+2. **Создание Docker-образа**
 docker build -t money-transfer .
 
-# Запуск через Docker Compose
+3. **Запуск через Docker Compose**
 docker-compose up
 
+## **Frontend**
+1. **Клонирование репозитория:**
+   ```bash
+   git clone https://github.com/serp-ya/card-transfer.git
+   cd card-transfer
+   ```
 
-# Примеры запросов (cURL)
+2. **Установка зависимостей:**
+   ```bash
+   npm install
+   ```
 
-## Перевод:
+3. **Настройка переменных окружения:**
+   - Откройте файл `.env` в корневой директории проекта.
+   - Измените значение переменной `REACT_APP_API_URL` на URL вашего API.  
+     **Примечание:** Описывать эндпоинты в файле `.env` **не нужно**.
 
-bash
+4. **Запуск приложения:**
+   ```bash
+   npm run start
+   ```
+   После запуска проект будет доступен по адресу: [http://localhost:3000/](http://localhost:3000/).
 
+---
+
+## **Форматирование и валидация полей**
+
+### **Форматирование ввода**
+- **Номер карты:**  
+  `0000000000000000` => `0000 0000 0000 0000`
+- **ММ/ГГ:**  
+  `1234` => `12/34`
+- **Сумма перевода:**  
+  `12345678` => `₽ 12 345 678`
+
+### **Валидация полей**
+- **Номер карты:** Обязательное поле, минимум 16 знаков.
+- **ММ/ГГ:** Обязательное поле, минимум 4 знака. Дата не может быть ниже текущей, месяц должен быть в диапазоне от 1 до 12.
+- **CVC:** Обязательное поле, минимум 3 знака.
+- **Сумма перевода:** Обязательное поле, не может быть равной или меньше 0.
+
+**Примечание:** Проверка ошибок срабатывает при нажатии кнопки "Отправить".
+
+---
+
+## **API Эндпоинты**
+
+Приложение формирует запросы к API на основе значения переменной `REACT_APP_API_URL` и "хвостов" эндпоинтов.
+
+### **Эндпоинты**
+1. **Перевод денег:**
+   ```
+   POST /transfer
+   ```
+   Принимает объект с данными формы.
+
+2. **Подтверждение операции:**
+   ```
+   POST /confirmOperation
+   ```
+   Принимает объект с ID операции и секретным кодом.
+
+---
+
+## **Обработка ошибок**
+
+- При возникновении ошибки на стороне сервера отображается модальное окно с текстом ошибки, который сервер прислал в поле `message` ответа.
+- При успешной отправке отображается соответствующее модальное окно, и поля формы очищаются.
+
+---
+
+## **Дополнительная информация**
+
+### **Форматирование запросов**
+Запросы формируются автоматически приложением на основе введенных пользователем данных.
+
+### **Примеры запросов**
+
+#### **Перевод денег**
+```bash
 curl -X POST http://localhost:5500/transfer \
 -H "Content-Type: application/json" \
 -d '{
-"cardFromNumber": "1234567890123456",
-"cardFromValidTill": "12/25",
-"cardFromCVV": "123",
-"cardToNumber": "1111222233334444",
-"amount": {
-"value": 10000,
-"currency": "RUB"
-}
+  "cardFromNumber": "1234567890123456",
+  "cardFromValidTill": "12/25",
+  "cardFromCVV": "123",
+  "cardToNumber": "1111222233334444",
+  "amount": {
+    "value": 10000,
+    "currency": "RUB"
+  }
 }'
+```
 
-Ответ:
-
-json
-{"operationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"}
-
-Подтверждение:
-
-bash
-
+#### **Подтверждение операции**
+```bash
 curl -X POST http://localhost:5500/confirmOperation \
 -H "Content-Type: application/json" \
 -d '{
-"operationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-"code": "0000"
+  "operationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "code": "0000"
 }'
+```
 
-Ответ:
+## Анализ
+**Как получить логи из контейнера:**
 
-json
-{"operationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"}
+**bash docker cp <container_id>:/app/logs/application.log ./local/path/**
 
-# Интеграция с FRONT
-Скачать FRONT:
+**Запуск проекта: Соберите проект:**
+bash ./gradlew clean build Запустите через Docker:
 
-bash
-git clone https://github.com/serp-ya/card-transfer.git front
-Запустить через Docker Compose (как выше)
+bash docker-compose down && docker-compose up --build
 
-FRONT будет доступен на: http://localhost:3000
+**Проверка работы: Бэкенд будет доступен на http://localhost:5500**
+**Фронтенд на http://localhost:3000**
 
-Бэкенд на: http://localhost:5500
+**Логи будут сохраняться в папке logs/ в вашем проекте**
 
-# Логирование операций
-Формат записи в transfers.log:
+**Альтернативный вариант (без Docker):**
+**В одном терминале (бэкенд):**
 
-text
-[2025-06-16 14:30:45] From: 1234567890123456 To: 1111222233334444 Amount: 100.00 RUB Commission: 0.00 Result: SUCCESS
-Каждая строка содержит:
+bash ./gradlew bootRun
 
-Дата и время
+**В другом терминале (фронтенд):**
 
-Карта отправителя
+bash cd C:\Java\Project1\WEB\card-transfer npm start
 
-Карта получателя
+**Проверка работы Фронтенд будет доступен по: http://localhost:3000**
+**Бэкенд будет доступен по: http://localhost:5500**
 
-Сумма и валюта
+**Для проверки API:**
 
-Комиссия
+bash curl -X POST http://localhost:5500/transfer -H "Content-Type: application/json" -d '{"cardFromNumber":"1234567890123456","cardToNumber":"1111222233334444", "amount":{"value":1000}}'
 
-Результат операции
+**Логирование Логи будут доступны:**
+**Бэкенд: в папке ./logs вашего проекта**
 
+**Фронтенд: в терминале или через docker logs money_transfer_service-frontend-1**
 
-
-
-# Тестирование
-Юнит-тесты:
-
-Mockito для сервисов и репозиториев
-
-Тесты валидации, логики перевода, подтверждения
-
-Интеграционные тесты:
-
-Testcontainers для поднятия БД
-
-SpringBootTest с полным контекстом
-
-Тесты REST-эндпоинтов
-
-Пример теста:
-
-java
-@SpringBootTest
-@AutoConfigureMockMvc
-class TransferControllerTest {
-@Autowired private MockMvc mockMvc;
-
-    @Test
-    void transferSuccess() throws Exception {
-        mockMvc.perform(post("/transfer")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content("{\"cardFromNumber\":\"1234567890123456\",...}"))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.operationId").exists());
-    }
-}
-
-# Важные замечания
-Хранение данных:
-
-Карты: JSON-файл (cards.json) при старте
-
-Операции: In-Memory хранилище (ConcurrentHashMap)
-
-Для продакшена заменить на БД (PostgreSQL)
-
-Безопасность:
-
-В реальном проекте добавить HTTPS
-
-Шифрование чувствительных данных
-
-Реальные коды подтверждения (SMS/email)
-
-Комиссии:
-
-В текущей реализации 0%
-
-Логика комиссий добавляется в TransferService
-
-Масштабирование:
-
-Добавить Spring Cloud Gateway для роутинга
-
-Балансировщик нагрузки (Nginx)
-
-Кластеризация через Kubernetes
-
-Проект соответствует всем требованиям: REST API, логирование, Docker-контейнеризация, интеграция с FRONT.
-
-
-# Анализ
-
-Как получить логи из контейнера:
-
-bash
-docker cp <container_id>:/app/logs/application.log ./local/path/
-
-
-1. Запуск проекта:
-   Соберите проект:
-
-bash
-./gradlew clean build
-Запустите через Docker:
-
-bash
-docker-compose down && docker-compose up --build
-
-2. Проверка работы:
-   Бэкенд будет доступен на http://localhost:5500
-
-Фронтенд на http://localhost:3000
-
-Логи будут сохраняться в папке logs/ в вашем проекте
-
-3. Альтернативный вариант (без Docker):
-
-В одном терминале (бэкенд):
-
-bash
-./gradlew bootRun
-
-В другом терминале (фронтенд):
-
-bash
-cd C:\Java\Project1\WEB\card-transfer
-npm start
-
-4. Проверка работы
-   Фронтенд будет доступен по: http://localhost:3000
-
-Бэкенд будет доступен по: http://localhost:5500
-
-Для проверки API:
-
-bash
-curl -X POST http://localhost:5500/transfer -H "Content-Type: application/json" -d 
-'{"cardFromNumber":"1234567890123456","cardToNumber":"1111222233334444",
-"amount":{"value":1000}}'
-
-5. Логирование
-Логи будут доступны:
-
-Бэкенд: в папке ./logs вашего проекта
-
-Фронтенд: в терминале или через docker logs money_transfer_service-frontend-1
+---

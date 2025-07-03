@@ -28,13 +28,13 @@ public class TransferService {
 
     private Card validateCard(String number, String validTill, String cvv) {
         Card card = cardRepository.findCard(number)
-                .orElseThrow(() -> new CardNotFoundException());
+                .orElseThrow(CardNotFoundException::new);
 
-        if (!card.getValidTill().equals(validTill)) {
+        if (!card.validTill().equals(validTill)) {
             throw new InvalidCardDataException("Card expiry date");
         }
 
-        if (!card.getCvv().equals(cvv)) {
+        if (!card.cvv().equals(cvv)) {
             throw new InvalidCardDataException("CVV code");
         }
 
@@ -44,18 +44,18 @@ public class TransferService {
     public OperationResponse transfer(TransferRequest request) {
         // Валидация карты отправителя
         Card cardFrom = validateCard(
-                request.getCardFromNumber(),
-                request.getCardFromValidTill(),
-                request.getCardFromCVV()
+                request.cardFromNumber(),
+                request.cardFromValidTill(),
+                request.cardFromCVV()
         );
 
         // Валидация карты получателя
-        Card cardTo = cardRepository.findCard(request.getCardToNumber())
-                .orElseThrow(() -> new CardNotFoundException());
+        Card cardTo = cardRepository.findCard(request.cardToNumber())
+                .orElseThrow(CardNotFoundException::new);
 
         // Проверка баланса
-        BigDecimal amount = BigDecimal.valueOf(request.getAmount().getValue());
-        if (cardFrom.getBalance().compareTo(amount) < 0) {
+        BigDecimal amount = BigDecimal.valueOf(request.amount().value());
+        if (cardFrom.balance().compareTo(amount) < 0) {
             throw new InsufficientFundsException();
         }
 
@@ -64,18 +64,17 @@ public class TransferService {
 
         // Создание операции
         Operation operation = new Operation(
-                UUID.randomUUID().toString(),
-                cardFrom.getNumber(),
-                cardTo.getNumber(),
-                amount,
-                commission,
-                request.getAmount().getCurrency(),
-                OperationStatus.CREATED.toString(),
-                "0000" // Тестовый код
+                UUID.randomUUID().toString(),       // id
+                cardFrom.number(),               // cardFrom
+                cardTo.number(),                 // cardTo
+                amount,                             // amount
+                commission,                         // commission
+                request.amount().currency(),        // currency
+                OperationStatus.CREATED.toString(), // status
+                "0000"                             // verificationCode
         );
-        operation.setId(UUID.randomUUID().toString());
 
         operationRepository.save(operation);
-        return new OperationResponse(operation.getId());
+        return new OperationResponse(operation.id());
     }
 }

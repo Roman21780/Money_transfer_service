@@ -1,15 +1,32 @@
 package ru.netology.money_transfer_service.exception;
 
-// Базовый класс для всех кастомных исключений
-public class AppException extends RuntimeException {
-    private final int id;
+import org.springframework.http.HttpStatus;
 
-    public AppException(String message, int id) {
+/**
+ * Базовое исключение приложения
+ */
+public class AppException extends RuntimeException {
+    private final ErrorCode errorCode;
+
+    public AppException(String message, ErrorCode errorCode) {
         super(message);
-        this.id = id;
+        this.errorCode = errorCode;
+    }
+
+    public AppException(String message, ErrorCode errorCode, Throwable cause) {
+        super(message, cause);
+        this.errorCode = errorCode;
     }
 
     public int getId() {
-        return id;
+        return errorCode.getId();
+    }
+
+    public HttpStatus getHttpStatus() {
+        return errorCode.getHttpStatus();
+    }
+
+    public String getErrorCode() {
+        return errorCode.name();
     }
 }

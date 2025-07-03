@@ -1,37 +1,23 @@
 package ru.netology.money_transfer_service.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.Objects;
 
-public class OperationResponse {
-    @JsonProperty("operationId")
-    private String operationId;
-
-    // Конструктор
-    public OperationResponse(String operationId) {
-            this.operationId = operationId;
+/**
+ * Ответ с идентификатором операции
+ *
+ * @param operationId Уникальный идентификатор операции
+ */
+public record OperationResponse(
+        @JsonProperty("operationId")
+        String operationId
+) {
+    // Дополнительные методы можно добавить при необходимости
+    // Например, метод для создания копии с новым ID
+    public OperationResponse withOperationId(String newOperationId) {
+        return new OperationResponse(newOperationId);
     }
 
-    // Геттеры и сеттеры
-    public String getOperationId() {
-        return operationId;
-    }
-
-    public void setOperationId(String operationId) {
-        this.operationId = operationId;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        OperationResponse that = (OperationResponse) o;
-        return Objects.equals(operationId, that.operationId);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(operationId);
-    }
+    // equals и hashCode генерируются автоматически
+    // toString также генерируется автоматически
 }
